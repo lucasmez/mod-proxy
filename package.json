@@ -1,0 +1,21 @@
+{
+  "name": "spy-proxy",
+  "version": "1.0.0",
+  "description": "A web proxy with configurable request and response including jQuery support",
+  "main": "spy-proxy.js",
+  "scripts": {
+    "test": "mocha test",
+    "pretest": "echo '-> linting' && npm run -s lint",
+    "lint": "jshint spy-proxy.js"
+  },
+  "author": "Lucas Mezalira",
+  "license": "ISC",
+  "devDependencies": {
+    "jshint": "^2.9.3",
+    "mocha": "^3.1.2",
+    "supertest": "^2.0.0"
+  },
+  "dependencies": {
+    "request": "^2.75.0"
+  }
+}
