@@ -1,6 +1,7 @@
 "use strict";
 
 const http =            require('http'),
+      net =             require('net'),
       util =            require('util'),
       url =             require('url'),
       hookIt =          require('./hookIt'),
@@ -21,6 +22,7 @@ function Proxy(strategy) {
     this._defaultMode = hookIt(strategy || defaultStrategy());
     _reorderLastHook(this._defaultMode);
     this.on('request', _requestEventHandler.bind(this));
+    this.on('connect', _tunnelToHTTPS);
 }
 
 util.inherits(Proxy, http.Server);
@@ -150,4 +152,22 @@ function _getClientFromPattern(pattern) {
         }
     });
     return false;
+}
+
+function _tunnelToHTTPS(clientRequest, clientSocket, headers) {
+    var originUrl = url.parse("https://" + clientRequest.url);
+    // Create new TCP connection to origin
+    var originSocket = net.connect(originUrl.port, originUrl.hostname, () => {
+        // Let client know connection was established
+        clientSocket.write('HTTP/1.1 200 Connection Established\r\n' +
+                        //'Proxy-agent: Node-Proxy\r\n' +
+                        '\r\n');
+        
+        // Send client request headers to origin
+        originSocket.write(headers);
+        
+        // Create client - origin pipes
+        originSocket.pipe(clientSocket);
+        clientSocket.pipe(originSocket); 
+    });
 }
