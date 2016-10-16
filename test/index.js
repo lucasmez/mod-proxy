@@ -179,7 +179,7 @@ describe('Strategies', () => {
 
         before( () => {
             var customRequestStrategy = require('../strategies/customRequest');
-            proxy = spyProxy.createProxy(customRequestStrategy);
+            proxy = spyProxy.createProxy(customRequestStrategy());
         });
 
     });

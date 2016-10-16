@@ -1,5 +1,7 @@
 "use strict";
 
+module.exports = hookIt;
+
 function hookIt(subject, preName, postName) {
     preName = preName || "pre";
     postName = postName || "after";
@@ -44,6 +46,19 @@ function hookIt(subject, preName, postName) {
         return this;
     }  
     
+    Hook.prototype.popPre = function(fnName) {
+        if(!(fnName && (typeof fnName === "string"))) return null;
+        if(!(fnName in this._pre && this._pre[fnName].length)) return null;
+        
+        return this._pre[fnName].pop();
+    }
+    
+    Hook.prototype.popAfter = function(fnName) {
+        if(!(fnName && (typeof fnName === "string"))) return null;
+        if(!(fnName in this._after && this._after[fnName].length)) return null;
+        
+        return this._after[fnName].pop();
+    }
     
     for(let prop in subject) {
         if(typeof subject[prop] !== "function") continue;

@@ -16,6 +16,5 @@
     "supertest": "^2.0.0"
   },
   "dependencies": {
-    "request": "^2.75.0"
   }
 }
