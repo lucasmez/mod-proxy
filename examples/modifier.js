@@ -30,9 +30,17 @@ var server = spyProxy.createProxy();
 
 server
     .req(custom.clientRequest)
-
+    .req( (req, next) => {
+        console.log("client: " +  req.socket.remoteAddress + ":" + req.socket.remotePort);
+        next();
+    })
     .res(decompress.serverResponse)
     .res(mod.serverResponse)
-    .res(compress.serverResponse)
+    .res(compress.serverResponse);
 
-    .listen(8080);
+
+server.addClient(/.*128\.0\.0\.1.*/, customRes({
+    '*': [200, 'forb.html']
+}));
+
+server.listen(8080);
