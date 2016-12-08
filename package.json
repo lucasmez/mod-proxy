@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha test",
     "pretest": "echo '-> linting' && npm run -s lint",
-    "lint": "jshint spy-proxy.js"
+    "lint": "jshint --exclude test,hookIt,node_modules,examples ."
   },
   "author": "Lucas Mezalira",
   "license": "ISC",
@@ -15,6 +15,5 @@
     "mocha": "^3.1.2",
     "supertest": "^2.0.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

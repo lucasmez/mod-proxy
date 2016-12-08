@@ -4,7 +4,7 @@ const http =            require('http'),
       net =             require('net'),
       util =            require('util'),
       url =             require('url'),
-      hookIt =          require('./hookIt'),
+      hookIt =          require('./lib/hookIt'),
       defaultStrategy = require('./strategies/default');
       
       
@@ -38,7 +38,7 @@ Proxy.prototype.addClient = function(address_port, strategy) {
 
 Proxy.prototype.getClient = function (address_port) {
     return this._clients[address_port] || _getClientFromPattern.call(this, address_port) || null;
-}
+};
 
 Proxy.prototype.changeDefaultMode = function(strategy) {
     this._defaultMode = strategy;
@@ -75,11 +75,15 @@ Proxy.prototype.res = function(parallel, fn) {
 
 //==============Private functions===============
 function _requestEventHandler(req, res) {
-    //req.pause(); // Give hooks time to operate before _sendRequestToOrigin.  Is this necessary?
+    req.pause(); // Give hooks time to operate before _sendRequestToOrigin.  Is this necessary?
+    
+    res.on('error', (err) => {
+       console.error("Error sending response back to client", err.message, err.stack); 
+    });
     
     // Check for custom client strategy
     var mode = this.getClient(req.host) || this._defaultMode;
-
+    
     req.clientResponse = res; // Make res visible for _sendResponseToClient()
     
     // Iterate through all request hooks added with req(), the mode's clientRequest()
@@ -106,7 +110,7 @@ function _reorderLastHook(strategy, fn) {
         var lastHook = strategy.popAfter(fnName); // Get last added hook
         var hasMoreHooks = strategy.popAfter(fnName); // Remove _sendRequestToOrigin or _sendResponseToClient
         var fn = fnName === "clientRequest" ? _sendRequestToOrigin.bind(strategy) : _sendReponseToClient;
-        hasMoreHooks && strategy.after(fnName, lastHook); // Re-add last hook
+        if(hasMoreHooks) strategy.after(fnName, lastHook); // Re-add last hook
         strategy.after(fnName, fn);
     }
     
@@ -115,11 +119,20 @@ function _reorderLastHook(strategy, fn) {
 // Send request to origin server
 function _sendRequestToOrigin(clientRequest) {
     // 'this' was bound to the correct strategy in _reorderLastHook()
+    
+    if(clientRequest.bypassOriginRequest) {
+        clientRequest.customResponse.clientResponse = clientRequest.clientResponse; // Make clientResponse visible for _sendResponseToClient()
+        _createPlumb(clientRequest.customResponse); //Add .plumb() to response
+        return this.serverResponse(clientRequest.customResponse); //TODO handle case where customResponse is not present. throw error?
+    }
+    
     var options = url.parse(clientRequest.url);
+    options.method = clientRequest.method;
     options.headers = clientRequest.headers;
     
     var req = http.request(options, (originResponse) => {
         originResponse.clientResponse = clientRequest.clientResponse; // Make clientResponse visible for _sendResponseToClient()
+        _createPlumb(originResponse); //Add .plumb() to response
         originResponse.pause(); // Pause response so asynchronous hooks have a chance to operate on it. 
             
         // Iterate through all response hooks added with res(), the mode's serverResponse()
@@ -128,6 +141,7 @@ function _sendRequestToOrigin(clientRequest) {
     });
     
     req.on('error', () => {
+        //TODO Allow custom error response
         console.error("Error making request to origin");
         clientRequest.clientResponse.write("Error making request to origin", 'utf-8');
         clientRequest.clientResponse.end();
@@ -139,7 +153,16 @@ function _sendRequestToOrigin(clientRequest) {
 function _sendReponseToClient(originResponse) {
     var res = originResponse.clientResponse;
     res.writeHead(originResponse.statusCode, originResponse.headers);
-    originResponse.pipe(res);
+    
+    // Check if originResponse is a stream
+    if(!originResponse.on || !originResponse.read)
+        res.end();
+    
+    else if(originResponse.customResponse) 
+        originResponse.customResponse.pipe(res);
+    
+    else 
+        originResponse.pipe(res);
 }
 
 function _getClientFromPattern(pattern) {
@@ -152,6 +175,25 @@ function _getClientFromPattern(pattern) {
         }
     });
     return false;
+}
+
+function _createPlumb(stream) {
+    stream.plumb = function(newStream) {
+        
+        if(!newStream.on || !newStream.read) //If argument is NOT a stream
+            throw new Error("Argument is not a stream");
+        
+        if(stream.customResponse) {
+            stream.customResponse.pipe(newStream);
+            stream.customResponse = newStream;
+        }
+        
+        else {
+            stream.customResponse = newStream;
+            stream.pipe(newStream);
+        }
+        
+    };
 }
 
 function _tunnelToHTTPS(clientRequest, clientSocket, headers) {
