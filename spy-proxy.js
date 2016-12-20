@@ -28,6 +28,9 @@ function Proxy(strategy) {
 util.inherits(Proxy, http.Server);
 
 Proxy.prototype.addClient = function(address_port, strategy) {
+    if(!(address_port instanceof RegExp))
+        return false;
+    
     var clientMode = hookIt(strategy || defaultStrategy());//DEFAULT_MODE_CONSTRUCTOR(this._defaultMode.getConfig())); //TODO
     clientMode.req = Proxy.prototype.req;
     clientMode.res = Proxy.prototype.res;
@@ -82,7 +85,7 @@ function _requestEventHandler(req, res) {
     });
     
     // Check for custom client strategy
-    var mode = this.getClient(req.host) || this._defaultMode;
+    var mode = this.getClient(req.socket.remoteAddress + ":" + req.socket.remotePort) || this._defaultMode;
     
     req.clientResponse = res; // Make res visible for _sendResponseToClient()
     
@@ -167,14 +170,17 @@ function _sendReponseToClient(originResponse) {
 
 function _getClientFromPattern(pattern) {
     var keys = Object.keys(this._clients);
+    var client;
+    
     keys.forEach( (address_port) => {
-        if(Object.prototype.toString.call(address_port) === "[object RegExp]") {
-            if(address_port.test(pattern)) {
-                return this._clients[address_port];
-            }
+        var address_port_pat = RegExp(address_port.slice(1, -1));
+        if(address_port_pat.test(pattern)) {
+            client =  this._clients[address_port];
         }
+        
     });
-    return false;
+  
+    return client || false;
 }
 
 function _createPlumb(stream) {
