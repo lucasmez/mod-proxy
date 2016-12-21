@@ -1,4 +1,4 @@
-const spyProxy = require('../spy-proxy');
+const modProxy = require('../mod-proxy');
 const customResponse = require('../strategies/customResponse');
 const compressor = require('../strategies/compressor');
 
@@ -33,6 +33,6 @@ var conf = {
 };
 
 //Create proxy with customResponse strategy
-var server = spyProxy.createProxy(customResponse(conf));
+var server = modProxy.createProxy(customResponse(conf));
 
 server.listen(8080);

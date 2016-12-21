@@ -1,7 +1,7 @@
-const spyProxy = require('../spy-proxy');
+const modProxy = require('../mod-proxy');
 
 
-var server = spyProxy.createProxy();
+var server = modProxy.createProxy();
 server.listen(8080, () => {
     console.log("Proxy listening on port ", 8080);
 });

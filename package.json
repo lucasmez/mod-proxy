@@ -1,8 +1,8 @@
 {
-  "name": "spy-proxy",
+  "name": "mod-proxy",
   "version": "1.0.0",
-  "description": "A web proxy with configurable request and response including jQuery support",
-  "main": "spy-proxy.js",
+  "description": "A node.js HTTP proxy with configurable requests and responses.",
+  "main": "mod-proxy.js",
   "scripts": {
     "test": "mocha test",
     "pretest": "echo '-> linting' && npm run -s lint",

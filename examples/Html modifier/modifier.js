@@ -1,4 +1,4 @@
-const spyProxy = require('../spy-proxy');
+const modProxy = require('../mod-proxy');
 const modifier = require('../strategies/modifier');
 const compressor = require('../strategies/compressor');
 
@@ -25,7 +25,7 @@ $('#promotion').after("<h1>After promotion</h1>").before("<h1>Before promotion</
 $('.container').append("<h1>Appended to container</h1>");
 
 //Create server
-var server = spyProxy.createProxy();
+var server = modProxy.createProxy();
 
 server
 	
