@@ -1,6 +1,6 @@
-const modProxy = require('../mod-proxy');
-const modifier = require('../strategies/modifier');
-const compressor = require('../strategies/compressor');
+const modProxy = require('../../mod-proxy');
+const modifier = require('../../strategies/modifier');
+const compressor = require('../../strategies/compressor');
 
 
 //Configure compressor to only decompress html files
