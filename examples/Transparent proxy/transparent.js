@@ -1,4 +1,4 @@
-const modProxy = require('../mod-proxy');
+const modProxy = require('../../mod-proxy');
 
 
 var server = modProxy.createProxy();
