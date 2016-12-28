@@ -1,6 +1,6 @@
-const modProxy = require('../mod-proxy');
-const customResponse = require('../strategies/customResponse');
-const compressor = require('../strategies/compressor');
+const modProxy = require('../../mod-proxy');
+const customResponse = require('../../strategies/customResponse');
+const compressor = require('../../strategies/compressor');
 
 var conf = {
 	
