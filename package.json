@@ -1,19 +1,31 @@
 {
   "name": "mod-proxy",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A node.js HTTP proxy with configurable requests and responses.",
   "main": "mod-proxy.js",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
   "scripts": {
-    "test": "mocha test",
-    "pretest": "echo '-> linting' && npm run -s lint",
+    "test": "mocha test"
+	"pretest": "echo '-> linting' && npm run -s lint",
     "lint": "jshint --exclude test,hookIt,node_modules,examples ."
   },
-  "author": "Lucas Mezalira",
-  "license": "ISC",
-  "devDependencies": {
-    "jshint": "^2.9.3",
-    "mocha": "^3.1.2",
-    "supertest": "^2.0.0"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucasmez/mod-proxy.git"
   },
-  "dependencies": {}
+  "keywords": [
+    "http",
+    "proxy",
+    "cheerio",
+    "middleware"
+  ],
+  "author": "Lucas Mezalira <lucasmezalira@hotmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lucasmez/mod-proxy/issues"
+  },
+  "homepage": "https://github.com/lucasmez/mod-proxy#readme"
 }
