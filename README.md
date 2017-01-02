@@ -3,6 +3,7 @@
 `mod-proxy` is an HTTPS tunnel proxy and an HTTP proxy that can programmed through `express`-style middlewares to act as a simple transparent proxy, log and/or modify client requests and server responses.
 
 ## Table of Contents
+* [Installation](#installation)
 * [General Concept](#general-concept)
 * [Usage Examples](#usage-examples)
   * [Basic transparent proxy](#basic-transparent-proxy)
@@ -23,6 +24,10 @@
   * [Response Object](#response-object)
 * [Clients](#clients)
 * [Test](#test)
+
+
+## Instalation
+`npm install mod-proxy --save`
 
 ## General Concept
 
