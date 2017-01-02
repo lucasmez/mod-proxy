@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha test",
 	"pretest": "echo '-> linting' && npm run -s lint",
     "lint": "jshint --exclude test,hookIt,node_modules,examples ."
   },
