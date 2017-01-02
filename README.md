@@ -26,7 +26,7 @@
 * [Test](#test)
 
 
-## Instalation
+## Installation
 `npm install mod-proxy --save`
 
 ## General Concept
