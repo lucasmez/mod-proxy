@@ -4,7 +4,7 @@ const assert = require('assert'),
       request = require('supertest'),
 
       mockServer = require('./mock_server'),
-      spyProxy = require('../spy-proxy'),
+      spyProxy = require('../mod-proxy'),
       makeRequest = require('./request-helper');
 
 describe('clientRequest and serverResponse middlewares', () => {
